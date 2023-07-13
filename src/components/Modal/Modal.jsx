@@ -1,42 +1,34 @@
-import { Component } from 'react';
+import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import css from './Modal.module.css';
 
-export class Modal extends Component {
-  componentDidMount() {
-    window.addEventListener('keydown', this.handleKeyDawn);
-  }
+export const Modal = ({ image, onClickClose }) => {
+  
+  useEffect(() => {
+    const handleKeyDawn = event => {
+      if (event.code === 'Escape') {
+        onClickClose();
+      }
+    };
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.handleKeyDawn);
-  }
+    window.addEventListener('keydown', handleKeyDawn);
+    return () => window.removeEventListener('keydown', handleKeyDawn);
+  }, [onClickClose]);
 
-  handleKeyDawn = event => {
-    if (event.code === 'Escape') {
-      this.props.onClickClose();
-    }
-  };
-
-  handleOverlayClick = event => {
+  const handleOverlayClick = event => {
     if (event.target === event.currentTarget) {
-      this.props.onClickClose();
+      onClickClose();
     }
   };
 
-  render() {
-    return (
-      <div className={css.overlay} onClick={this.handleOverlayClick}>
-        <div className={css.modal}>
-          <img
-            className={css.modalImg}
-            src={this.props.image}
-            alt="Here will be pic soon"
-          />
-        </div>
+  return (
+    <div className={css.overlay} onClick={handleOverlayClick}>
+      <div className={css.modal}>
+        <img className={css.modalImg} src={image} alt="Here will be pic soon" />
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 Modal.propTypes = {
   onClickClose: PropTypes.func.isRequired,
